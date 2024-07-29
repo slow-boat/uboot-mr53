@@ -50,12 +50,6 @@ DECLARE_GLOBAL_DATA_PTR;
 #define GPIO_CFG(x)    (GPIO_CFG_BASE + 0x10 * x)
 #define GPIO_IO(x) (GPIO_IO_BASE + 0x10 * x)
 
-#if defined(CONFIG_YOWIE)
-#define GPIO_RESET                             26
-#else
-#define GPIO_RESET                             25
-#endif
-
 enum{
        POWER_POE_AT=0,
        POWER_POE_AF=1,
@@ -314,10 +308,6 @@ int board_init()
                unsigned int reg_data=0, result=0;
 
 #if defined(CONFIG_YOWIE)
-	       (*(volatile unsigned int *)GPIO_CFG(6)) = 0x2c0;
-	       (*(volatile unsigned int *)GPIO_IO(6)) = 0x0;
-	       udelay(24000);
-	       (*(volatile unsigned int *)GPIO_IO(6)) = 0x2;
                //GPIO2, PWM reset, output, low-active
                (*(volatile unsigned int *)GPIO_CFG(2)) = 0x203;
                (*(volatile unsigned int *)GPIO_IO(2)) = 0x2;//keep high level to prevent accident operation
@@ -341,16 +331,6 @@ int board_init()
                //GPIO22, IPQ8068 reset, output, low-active
                (*(volatile unsigned int *)GPIO_CFG(22)) = 0x203;
                (*(volatile unsigned int *)GPIO_IO(22)) = 0x2;
-	       //GPIO25, Factory Reset button, input, low active
-	       	(*(volatile unsigned int *)GPIO_CFG(25)) = 0x3;
-		//GPIO6,GPIO7 PHY enable
-		(*(volatile unsigned int *)GPIO_CFG(6)) = 0x300;
-		(*(volatile unsigned int *)GPIO_CFG(7)) = 0x300;
-		(*(volatile unsigned int *)GPIO_IO(6)) = 0x0;
-		(*(volatile unsigned int *)GPIO_IO(7)) = 0x0;
-		udelay(24000);
-		(*(volatile unsigned int *)GPIO_IO(6)) = 0x2;
-		(*(volatile unsigned int *)GPIO_IO(7)) = 0x2;
 #endif
        }
 	
@@ -955,18 +935,3 @@ void board_pci_deinit()
 
 }
 #endif /* CONFIG_IPQ806X_PCI */
-
-int meraki_tftp(void)
-{
-	if (!readl(GPIO_IN_OUT_ADDR(GPIO_RESET))) {
-		printf("\nRESET pressed: TFTP booting...\n");
-		run_command("tftpboot $fit_uimage_initramfs",0);
-		run_command("bootbk 0x48000000 bootkernel2 $config_dts",0);
-	}
-	
-	return 0;
-}
-
-U_BOOT_CMD(
-        tftpload, 1, 0, meraki_tftp, "",""
-);

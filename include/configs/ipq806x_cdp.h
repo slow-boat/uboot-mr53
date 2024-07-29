@@ -42,19 +42,15 @@
 #if defined(CONFIG_YOWIE)
 #define CONFIG_ENV_DTS       "config_dts=config@1\0"
 #define V_PROMPT             "(YOWIE)# "
-#define TFTP_IMAGE           "fit_uimage_initramfs=openwrt-ipq806x-generic-meraki_mr42-initramfs-fit-uImage.itb\0"
 #elif defined(CONFIG_BIGFOOT)
 #define CONFIG_ENV_DTS       "config_dts=config@2\0"
 #define V_PROMPT             "(BIGFOOT)# "
-#define TFTP_IMAGE           "fit_uimage_initramfs=openwrt-ipq806x-generic-meraki_mr52-initramfs-fit-uImage.itb\0"
 #elif defined(CONFIG_SASQUATCH)
 #define CONFIG_ENV_DTS       "config_dts=config@3\0"
 #define V_PROMPT             "(SASQUATCH)# "
-#define TFTP_IMAGE           "fit_uimage_initramfs=openwrt-ipq806x-generic-meraki_mr53-initramfs-fit-uImage.itb\0"
 #elif defined(CONFIG_WOOKIE)
 #define CONFIG_ENV_DTS       "config_dts=config@4\0"
 #define V_PROMPT             "(WOOKIE)# "
-#define TFTP_IMAGE           "fit_uimage_initramfs=openwrt-ipq806x-generic-meraki_mr84-initramfs-fit-uImage.itb\0"
 #endif
 
 //#define CONFIG_IPQ806X_USB
@@ -74,7 +70,7 @@
 #undef CONFIG_CMD_IMLS
 #undef CONFIG_CMD_NFS		        /* NFS support */
 #define CONFIG_CMD_NET		        /* network support */
-#define CONFIG_IPQ_ETH
+#undef CONFIG_IPQ_ETH
 #define CONFIG_CMD_DHCP
 #undef CONFIG_SYS_MAX_FLASH_SECT
 #define CONFIG_NR_DRAM_BANKS            1
@@ -129,7 +125,7 @@
 #define CONFIG_SYS_TEXT_BASE            0x41200000
 #define CONFIG_SYS_SDRAM_SIZE           0x10000000
 #define CONFIG_MAX_RAM_BANK_SIZE        CONFIG_SYS_SDRAM_SIZE
-#define CONFIG_SYS_LOAD_ADDR            (CONFIG_SYS_SDRAM_BASE + (64 << 21))
+#define CONFIG_SYS_LOAD_ADDR            (CONFIG_SYS_SDRAM_BASE + (64 << 20))
 
 /*
  * I2C Configs
@@ -321,19 +317,16 @@ typedef struct {
 
 /* NSS firmware loaded using bootm */
 #define CONFIG_IPQ_FIRMWARE
-//#define CONFIG_BOOTCOMMAND  "tftpboot $fit_uimage_initramfs; bootbk 0x48000000 bootkernel2 $config_dts"
-#define CONFIG_BOOTCOMMAND  "tftpload; run meraki_bootkernel2"
+#define CONFIG_BOOTCOMMAND  "run meraki_bootkernel2; run meraki_bootkernel1"
 #define CONFIG_EXTRA_ENV_SETTINGS   CONFIG_ENV_DTS \
-       TFTP_IMAGE \
        "meraki_bootkernel2=nand read 0x42000000 0x02c40000 0x00a80000; bootbk 0x42000000 bootkernel2 $config_dts\0" \
-       "meraki_bootkernel1=nand read 0x42000000 0x021c0000 0x00a80000; bootbk 0x42000000 bootkernel1 $config_dts\0" \
-       "ipaddr=192.168.1.100\0" \
-       "serverip=192.168.1.250\0"
+       "meraki_bootkernel1=nand read 0x42000000 0x021c0000 0x00a80000; bootbk 0x42000000 bootkernel1 $config_dts\0"
+
 #define CONFIG_BOOTARGS "console=ttyHSL1,115200n8 maxcpus=0"
 #define CONFIG_CMD_ECHO
 #define CONFIG_BOOTDELAY	2
 #define CONFIG_AUTOBOOT_KEYED
-#define CONFIG_AUTOBOOT_STOP_STR " "
+#define CONFIG_AUTOBOOT_STOP_STR "xyzzy"
 
 #define CONFIG_MTD_DEVICE
 #define CONFIG_MTD_PARTITIONS
