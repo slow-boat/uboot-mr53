@@ -161,8 +161,8 @@ def memwrite(ser, path, size, start_addr, verbose, debug, shell):
 		print("Error while reading file '", fd.name, "' at offset " + bytes_read)
 		return False
 	else:
-		print("\rProgress 100%				")
-		writecommand(ser, "go {0:08x}".format(start_addr), prompt, verbose)
+		print("\rProgress 100%: Now Run \"go {0:08x}\"".format(start_addr))
+		#writecommand(ser, "go {0:08x}".format(start_addr), prompt, verbose)
 		return True
 
 def upload(ser, path, size, start_addr, verbose, debug, shell):
