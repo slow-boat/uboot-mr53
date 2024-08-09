@@ -652,6 +652,7 @@ int board_eth_init(bd_t *bis)
 	 * initing the GMAC
 	 */
 	switch (gboard_param->machid) {
+	case MACH_TYPE_IPQ806X_AP160:
 	case MACH_TYPE_IPQ806X_AP160_2XX:
 		ipq_register_switch(ipq_qca8511_init);
 		break;
